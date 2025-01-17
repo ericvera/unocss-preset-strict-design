@@ -25,6 +25,9 @@
     "postpublish": "pinst --enable"
   },
   "packageManager": "yarn@4.6.0",
+  "dependencies": {
+    "unocss": "^65.4.2"
+  },
   "devDependencies": {
     "@eslint/js": "^9.18.0",
     "@tsconfig/strictest": "^2.0.5",
