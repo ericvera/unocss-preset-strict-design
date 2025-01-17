@@ -10,7 +10,7 @@ export const rules: Rule<PresetStrictDesignTheme>[] = [
   [
     /^mask-size-(.+)$/,
     ([, level], { theme }) => {
-      if (!level || !theme.spacing[level]) {
+      if (!level || !theme.spacing?.[level]) {
         return
       }
 
@@ -29,7 +29,7 @@ export const rules: Rule<PresetStrictDesignTheme>[] = [
   [
     /^opacity-(.+)$/,
     ([, level], { theme }) =>
-      level && theme.opacity[level]
+      level && theme.opacity?.[level]
         ? { ['opacity']: theme.opacity[level] }
         : undefined,
   ],

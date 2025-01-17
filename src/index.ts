@@ -1,25 +1,42 @@
-import type { PresetWindTheme } from 'unocss'
+import type { PresetFactory, PresetWindTheme } from 'unocss'
 import { definePreset, presetWind } from 'unocss'
 import { blocklist } from './blocklist.js'
 import { extendTheme } from './extendTheme.js'
-import type { WithRequired } from './internal/types.js'
 import { rules } from './rules.js'
 
-export interface PresetStrictDesignTheme
-  extends WithRequired<
-    PresetWindTheme,
-    'colors' | 'spacing' | 'fontSize' | 'fontWeight'
-  > {
-  opacity: Record<string, string>
+export interface PresetStrictDesignTheme extends PresetWindTheme {
+  opacity?: Record<string, string>
 }
 
 export interface PresetStrictDesignOptions {
   theme: PresetStrictDesignTheme
 }
 
-export const presetStrictDesign = definePreset(
-  (options: PresetStrictDesignOptions) => {
-    const { theme } = options
+export const presetStrictDesign: PresetFactory<
+  PresetStrictDesignTheme,
+  PresetStrictDesignOptions
+> = definePreset<PresetStrictDesignOptions, PresetStrictDesignTheme>(
+  (options) => {
+    const theme = options?.theme
+
+    if (!theme) {
+      throw new Error('theme is required')
+    }
+
+    // NOTE: Something in the types of definePreset makes it so that the theme
+    // property cannot have required properties. Because of this, we need to
+    // enforce the required properties here.
+
+    if (
+      !theme.colors ||
+      !theme.spacing ||
+      !theme.fontSize ||
+      !theme.fontWeight
+    ) {
+      throw new Error(
+        'theme with a minimum of colors, spacing, fontSize, and fontWeight is required',
+      )
+    }
 
     return {
       ...presetWind(),

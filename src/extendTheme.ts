@@ -5,6 +5,10 @@ export const extendTheme =
   (theme: PresetStrictDesignTheme) => (defaultTheme: PresetMiniTheme) => {
     const strictTheme: PresetStrictDesignTheme = { ...defaultTheme, ...theme }
 
+    if (!theme.spacing) {
+      throw new Error('spacing is required in theme')
+    }
+
     // Set default values for width, height, maxWidth, and maxHeight if not
     // defined in theme.
     if (!strictTheme.width) {
