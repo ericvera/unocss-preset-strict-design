@@ -2,6 +2,7 @@ import type { PresetFactory, PresetWindTheme } from 'unocss'
 import { definePreset, presetWind } from 'unocss'
 import { blocklist } from './blocklist.js'
 import { extendTheme } from './extendTheme.js'
+import { rules as localRules } from './rules.js'
 
 export interface PresetStrictDesignTheme extends PresetWindTheme {
   opacity?: Record<string, string>
@@ -39,13 +40,11 @@ export const presetStrictDesign: PresetFactory<
 
     const wind = presetWind()
 
-    const rules = []
+    const rules = [...localRules]
 
     if (wind.rules) {
       rules.push(...wind.rules)
     }
-
-    rules.push(...rules)
 
     return {
       ...wind,
