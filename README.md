@@ -112,6 +112,23 @@ This preset enforces several restrictions to maintain design consistency:
    - `fontWeight`
    - `opacity`
 
+## Available Utility Classes
+
+This preset provides the following utility classes:
+
+### Mask Size
+
+- `mask-size-{size}`: Sets the mask size using your theme's spacing values
+  - Example: `mask-size-4` will use the spacing value defined at `theme.spacing['4']`
+  - Only uses predefined spacing values from your theme
+
+### Opacity
+
+- `opacity-{value}`: Sets the opacity using your theme's opacity values
+  - Example: `opacity-50` will use the opacity value defined at `theme.opacity['50']`
+  - Only uses predefined opacity values from your theme
+  - This overrides the opacity rule in the wind preset that allows for arbitrary opacity values
+
 ## License
 
 MIT
