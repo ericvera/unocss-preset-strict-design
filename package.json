@@ -1,5 +1,5 @@
 {
-  "name": "i-forgot-to-rename-my-package",
+  "name": "unocss-preset-strict-design",
   "version": "0.0.1",
   "type": "module",
   "exports": {
@@ -19,7 +19,6 @@
     "lint": "eslint .",
     "test": "vitest run",
     "smoke": "yarn build && yarn lint && yarn test",
-    "docs": "typedoc && prettier --ignore-unknown --write docs/",
     "-- PRE-COMMIT HOOKS --": "",
     "localAfterInstall": "husky || true",
     "prepublishOnly": "pinst --disable",
@@ -36,8 +35,6 @@
     "lint-staged": "^15.4.1",
     "pinst": "^3.0.0",
     "prettier": "^3.4.2",
-    "typedoc": "^0.27.6",
-    "typedoc-plugin-markdown": "^4.4.1",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.20.0",
     "vitest": "^3.0.2"
@@ -49,9 +46,15 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/user/i-forgot-to-rename-my-package"
+    "url": "https://github.com/ericvera/unocss-preset-strict-design"
   },
-  "keywords": [],
+  "keywords": [
+    "unocss",
+    "atomic-css",
+    "unocss-preset",
+    "css",
+    "tailwind"
+  ],
   "license": "MIT",
   "lint-staged": {
     "*.{ts,tsx,mjs}": "eslint --cache",
