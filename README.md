@@ -1,6 +1,9 @@
 # UnoCSS Strict Design Preset
 
-A strict design system preset for [UnoCSS](https://github.com/unocss/unocss).
+**A strict design system preset for [UnoCSS](https://github.com/unocss/unocss).**
+
+[![github license](https://img.shields.io/github/license/ericvera/unocss-preset-strict-design.svg?style=flat-square)](https://github.com/ericvera/unocss-preset-strict-design/blob/master/LICENSE)
+[![npm version](https://img.shields.io/npm/v/unocss-preset-strict-design.svg?style=flat-square)](https://npmjs.org/package/unocss-preset-strict-design)
 
 ## Features
 
