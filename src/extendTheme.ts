@@ -11,27 +11,27 @@ export const extendTheme =
 
     // Set default values for width, height, maxWidth, and maxHeight if not
     // defined in theme.
-    if (!strictTheme.width) {
+    if (!theme.width) {
       strictTheme.width = theme.spacing
     }
 
-    if (!strictTheme.height) {
+    if (!theme.height) {
       strictTheme.height = theme.spacing
     }
 
-    if (!strictTheme.maxWidth) {
+    if (!theme.maxWidth) {
       strictTheme.maxWidth = theme.spacing
     }
 
-    if (!strictTheme.maxHeight) {
+    if (!theme.maxHeight) {
       strictTheme.maxHeight = theme.spacing
     }
 
-    if (!strictTheme.minWidth) {
+    if (!theme.minWidth) {
       strictTheme.minWidth = theme.spacing
     }
 
-    if (!strictTheme.minHeight) {
+    if (!theme.minHeight) {
       strictTheme.minHeight = theme.spacing
     }
 
