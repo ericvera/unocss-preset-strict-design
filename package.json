@@ -29,18 +29,18 @@
     "unocss": "^65.4.2"
   },
   "devDependencies": {
-    "@eslint/js": "^9.18.0",
+    "@eslint/js": "^9.19.0",
     "@tsconfig/strictest": "^2.0.5",
-    "@types/node": "^22.10.7",
-    "eslint": "^9.18.0",
+    "@types/node": "^22.10.10",
+    "eslint": "^9.19.0",
     "husky": "^9.1.7",
     "is-ci": "^4.1.0",
-    "lint-staged": "^15.4.1",
+    "lint-staged": "^15.4.3",
     "pinst": "^3.0.0",
     "prettier": "^3.4.2",
     "typescript": "^5.7.3",
-    "typescript-eslint": "^8.21.0",
-    "vitest": "^3.0.2"
+    "typescript-eslint": "^8.22.0",
+    "vitest": "^3.0.4"
   },
   "prettier": {
     "tabWidth": 2,
