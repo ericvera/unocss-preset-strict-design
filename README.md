@@ -131,7 +131,3 @@ This preset provides the following utility classes:
   - Example: `opacity-50` will use the opacity value defined at `theme.opacity['50']`
   - Only uses predefined opacity values from your theme
   - This overrides the opacity rule in the wind preset that allows for arbitrary opacity values
-
-## License
-
-MIT
