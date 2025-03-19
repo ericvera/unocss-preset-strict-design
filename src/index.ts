@@ -1,5 +1,5 @@
 import type { PresetFactory, PresetWindTheme } from 'unocss'
-import { definePreset, presetWind } from 'unocss'
+import { definePreset, presetWind3 } from 'unocss'
 import { blocklist } from './blocklist.js'
 import { extendTheme } from './extendTheme.js'
 import { rules as localRules } from './rules.js'
@@ -38,7 +38,7 @@ export const presetStrictDesign: PresetFactory<
       )
     }
 
-    const wind = presetWind()
+    const wind = presetWind3()
 
     const rules = [...localRules]
 
