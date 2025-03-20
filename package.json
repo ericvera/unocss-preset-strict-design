@@ -25,8 +25,8 @@
     "postpublish": "pinst --enable"
   },
   "packageManager": "yarn@4.7.0",
-  "dependencies": {
-    "unocss": "^66.1.0-beta.6"
+  "peerDependencies": {
+    "unocss": "66.x"
   },
   "devDependencies": {
     "@eslint/js": "^9.22.0",
@@ -34,12 +34,12 @@
     "@types/node": "^22.13.10",
     "eslint": "^9.22.0",
     "husky": "^9.1.7",
-    "is-ci": "^4.1.0",
     "lint-staged": "^15.5.0",
     "pinst": "^3.0.0",
     "prettier": "^3.5.3",
     "typescript": "^5.8.2",
-    "typescript-eslint": "^8.26.1",
+    "typescript-eslint": "^8.27.0",
+    "unocss": "66.x",
     "vitest": "^3.0.9"
   },
   "prettier": {
