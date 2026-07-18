@@ -74,3 +74,28 @@
   `shouldBeBlocked.ts`) rather than the plan's placeholder name — explicitly
   left to implementer discretion.
 - Verification: `yarn smoke` green (build + lint + 44 tests across 4 files).
+
+## 3.1 — Release packaging: v3.0.0, peer dep ^66.7.0, README rewrite + migration guide
+
+- Key changes:
+  - `package.json`: `version` 2.0.0 → 3.0.0; `peerDependencies.unocss`
+    `66.x` → `^66.7.0` (devDependency `^66.7.5` untouched); `yarn.lock`
+    refreshed via `yarn install` (peer range line only).
+  - `README.md`: usage example's flat `fontSize` replaced with nested `text`
+    (one entry shows `lineHeight`); "Theme Value Inheritance" replaced with
+    "Sizing Resolves from Spacing" (sizing/gap utilities resolve from
+    `theme.spacing`; no width/height sections); Restrictions rewritten —
+    bracket examples marked always-blocked, `text-sm`/`m-4`/`bg-primary`
+    marked conditional on theme keys, note on unconditional blocking of
+    non-strict sections (`rounded-lg`/`shadow-md`); Required Theme
+    Properties now `colors`/`spacing`/`text`/`fontWeight` with `opacity`
+    noted as needed for `opacity-*`; "wind preset" wording updated to wind4;
+    new `## Migrating from v2 to v3` section covering (a) `fontSize` → `text`
+    (flat and tuple before/after), (b) wind3 → wind4 base + `unocss ^66.7.0`
+    peer, (c) removed width/height theme sections, (d) suffix-conditional
+    blocking incl. new `2xs`/`3xs`, (e) CSS-variable output/preflights and
+    newly-closed bracket holes.
+- Deviations from plan: none.
+- Verification: `yarn smoke` green (build + lint + 44 tests); every README
+  class example cross-checked against `src/preset.test.ts` /
+  `src/blocklist.test.ts` assertions; no publish/tag performed.
