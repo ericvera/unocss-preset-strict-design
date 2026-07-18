@@ -4,3 +4,4 @@
 - state engine: prettier commit hook reformatted requirements.md after its approval hash was recorded → spurious mismatch/cascade; workaround adopted: run `yarn prettier --write` on mise artifacts before approving
 - critic plan: 2 rounds, blocking 2,0 (round 1 caught by EXECUTING the design: wind4 m/p/gap resolves the numeric multiplier before theme lookup, and var-based output broke all literal assertions — reading the code alone had missed both)
 - acceptance: user flagged src/index.ts type patching — as-unknown-as Preset cast; fix: preset generic = PresetWind4Theme, strict theme at options boundary only (verified compiling in scratch)
+- acceptance round 2: user chose boundary re-brand + parse-don't-cast over cast-free-but-weak-DX; discussion turned a type question into a design decision (defineConfig must force the strict theme)
