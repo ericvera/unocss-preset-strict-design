@@ -182,3 +182,25 @@ In v2, size-suffixed utilities (`-xs`, `-sm`, `-md`, ... `-9xl`) were always blo
 wind4 emits CSS-variable-based output and preflights: theme values become CSS variables (e.g. `--spacing-1`, `--colors-primary`, `--text-sm-fontSize`) and declarations reference them. Visual results are unchanged when values come from your theme, but raw CSS diffs are expected.
 
 Also note that v3 closes blocking holes v2 had: bracket values such as `w-[10px]`, `gap-[2rem]`, `mx-[10px]`, `py-[4px]`, and `mask-size-[10px]` slipped through v2's regexes and are now blocked, so you may see new block behavior for classes that previously (incorrectly) generated CSS.
+
+### 6. Drop the `defineConfig` generic
+
+The preset is internally typed against wind4's theme, so the strict `PresetStrictDesignTheme` type now applies at the preset's options boundary rather than at the config level. If you parameterized `defineConfig<PresetStrictDesignTheme>(...)` in v2, it no longer compiles — drop the generic and let inference work (or use `PresetWind4Theme`).
+
+To keep strict typing while authoring your theme, annotate the theme value instead and pass it to `presetStrictDesign({ theme })` — this preserves the required nested `text` shape checking and the compile error on the old flat `fontSize`:
+
+```ts
+// v2
+export default defineConfig<PresetStrictDesignTheme>({
+  presets: [presetStrictDesign({ theme })],
+})
+
+// v3
+const theme: PresetStrictDesignTheme = {
+  // ...
+}
+
+export default defineConfig({
+  presets: [presetStrictDesign({ theme })],
+})
+```

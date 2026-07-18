@@ -120,3 +120,5 @@
 - Verification: `yarn prettier --write .` then `yarn smoke` green (build +
   lint + 44 tests across 4 files); `grep -n "unknown" src/*.ts` returns
   nothing.
+
+- Review fix: documented the defineConfig generic change (drop `defineConfig<PresetStrictDesignTheme>`, annotate the theme value instead) in the README v2-to-v3 migration guide as item 6; `yarn smoke` green.
