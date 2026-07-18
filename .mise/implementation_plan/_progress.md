@@ -122,3 +122,44 @@
   nothing.
 
 - Review fix: documented the defineConfig generic change (drop `defineConfig<PresetStrictDesignTheme>`, annotate the theme value instead) in the README v2-to-v3 migration guide as item 6; `yarn smoke` green.
+
+## Acceptance fix — boundary re-brand + parse-don't-cast
+
+- Key changes:
+  - `src/index.ts`: factory kept as
+    `definePreset<PresetStrictDesignOptions, PresetWind4Theme>` assigned to an
+    internal `factory` const; exported re-branded as
+    `presetStrictDesign = factory as unknown as PresetFactory<PresetStrictDesignTheme, PresetStrictDesignOptions>`
+    with a NOTE explaining the single boundary assertion is unprovable in TS
+    (Preset<Theme> invariant via RuleContext's UnoGenerator) but true at
+    runtime (parseTheme validation + extendTheme's wholesale `text`
+    replacement / emptied `container`). The two inline validation throws
+    replaced by `const theme = parseTheme(options?.theme)`.
+  - `src/internal/parseTheme.ts` (NEW): `parseTheme(input: unknown):
+PresetStrictDesignTheme` — preserves the exact `'theme is required'` and
+    collective four-section messages, then deep-checks shapes (colors as
+    wind4 Colors incl. nesting, spacing/fontWeight/opacity string records,
+    text entries with string `fontSize` and optional string lineHeight/
+    letterSpacing) with precise per-key errors (e.g.
+    `theme.text.sm must define fontSize as a string`). Narrowing is done via
+    an `asserts theme is Record<string, unknown> & PresetStrictDesignTheme`
+    assertion signature — no `as PresetStrictDesignTheme` cast. Exports
+    `isStringRecord` helper. Co-located `parseTheme.test.ts` (12 tests).
+  - `src/rules.ts`: opacity handler's `theme as PresetStrictDesignTheme` cast
+    replaced by `theme as { opacity?: unknown }` read backed by the
+    `isStringRecord` runtime check.
+  - `README.md` migration §6 flipped: `defineConfig<PresetStrictDesignTheme>`
+    works again in v3; bare `defineConfig` infers the strict theme; annotating
+    the theme value kept as the recommended authoring pattern.
+- Deviations from plan: none. Assertion signature used instead of boolean
+  predicates (both are type predicates; assertion form keeps the throw-based
+  checks in one place).
+- Verification: `yarn prettier --write .` then `yarn smoke` green (build +
+  lint + 56 tests: 44 pre-existing unmodified + 12 new). Type-boundary
+  scratch file confirmed `defineConfig<PresetStrictDesignTheme>` and bare
+  `defineConfig` (strict theme inferred in a custom rule context) both
+  compile; the `@ts-expect-error` flat-`fontSize` guard still holds (build
+  type-checks tests). Behavioral spot-check via node + createGenerator:
+  `opacity-80` → 0.75, `text-1` resolves, malformed text entry throws the new
+  precise message; scratch files deleted. Only `unknown` casts in src/: the
+  index.ts export re-brand and the rules.ts `{ opacity?: unknown }` read.

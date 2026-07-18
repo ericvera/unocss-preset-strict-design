@@ -1,5 +1,5 @@
 import type { CSSObject, PresetWind4Theme, Rule } from 'unocss'
-import type { PresetStrictDesignTheme } from './index.js'
+import { isStringRecord } from './internal/parseTheme.js'
 
 const spacingPropertyBase: Record<string, string> = {
   m: 'margin',
@@ -47,12 +47,19 @@ export const rules: Rule<PresetWind4Theme>[] = [
     /^opacity-(.+)$/,
     ([, level], { theme }) => {
       // NOTE: opacity is this preset's theme extension; the merged runtime
-      // theme carries it, but wind4's Theme type does not.
-      const { opacity } = theme as PresetStrictDesignTheme
+      // theme carries it, but wind4's Theme type does not. The read is
+      // widened only to an anonymous { opacity?: unknown } shape and backed
+      // by the isStringRecord runtime check instead of a cast to the strict
+      // theme type.
+      const { opacity } = theme as { opacity?: unknown }
 
-      return level && opacity?.[level]
-        ? { ['opacity']: opacity[level] }
-        : undefined
+      if (!level || !isStringRecord(opacity)) {
+        return
+      }
+
+      const value = opacity[level]
+
+      return value ? { opacity: value } : undefined
     },
   ],
 

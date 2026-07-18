@@ -183,19 +183,13 @@ wind4 emits CSS-variable-based output and preflights: theme values become CSS va
 
 Also note that v3 closes blocking holes v2 had: bracket values such as `w-[10px]`, `gap-[2rem]`, `mx-[10px]`, `py-[4px]`, and `mask-size-[10px]` slipped through v2's regexes and are now blocked, so you may see new block behavior for classes that previously (incorrectly) generated CSS.
 
-### 6. Drop the `defineConfig` generic
+### 6. The `defineConfig` generic still works
 
-The preset is internally typed against wind4's theme, so the strict `PresetStrictDesignTheme` type now applies at the preset's options boundary rather than at the config level. If you parameterized `defineConfig<PresetStrictDesignTheme>(...)` in v2, it no longer compiles — drop the generic and let inference work (or use `PresetWind4Theme`).
+The preset factory is exported typed against `PresetStrictDesignTheme`, so `defineConfig<PresetStrictDesignTheme>(...)` compiles in v3 exactly as it did in v2 — no config change needed. A bare `defineConfig({ ... })` also infers the strict theme from the preset, so custom rules, shortcuts, and `extendTheme` entries in your `uno.config` see `theme.opacity` and the required-`fontSize` `text` typing automatically.
 
-To keep strict typing while authoring your theme, annotate the theme value instead and pass it to `presetStrictDesign({ theme })` — this preserves the required nested `text` shape checking and the compile error on the old flat `fontSize`:
+Annotating the theme value is still the recommended authoring pattern — it applies the required nested `text` shape checking (and the compile error on the old flat `fontSize`) right where the theme is written:
 
 ```ts
-// v2
-export default defineConfig<PresetStrictDesignTheme>({
-  presets: [presetStrictDesign({ theme })],
-})
-
-// v3
 const theme: PresetStrictDesignTheme = {
   // ...
 }
