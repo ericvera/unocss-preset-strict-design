@@ -2708,7 +2708,7 @@ __metadata:
     unocss: "npm:^66.7.5"
     vitest: "npm:^4.1.10"
   peerDependencies:
-    unocss: 66.x
+    unocss: ^66.7.0
   languageName: unknown
   linkType: soft
 

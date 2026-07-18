@@ -1,10 +1,15 @@
-import type { PresetFactory, PresetWindTheme } from 'unocss'
-import { definePreset, presetWind3 } from 'unocss'
+import type { PresetFactory, PresetWind4Theme } from 'unocss'
+import { definePreset, presetWind4 } from 'unocss'
 import { blocklist } from './blocklist.js'
 import { extendTheme } from './extendTheme.js'
+import { parseTheme } from './internal/parseTheme.js'
 import { rules as localRules } from './rules.js'
 
-export interface PresetStrictDesignTheme extends PresetWindTheme {
+export interface PresetStrictDesignTheme extends PresetWind4Theme {
+  text?: Record<
+    string,
+    { fontSize: string; lineHeight?: string; letterSpacing?: string }
+  >
   opacity?: Record<string, string>
 }
 
@@ -12,46 +17,44 @@ export interface PresetStrictDesignOptions {
   theme: PresetStrictDesignTheme
 }
 
-export const presetStrictDesign: PresetFactory<
-  PresetStrictDesignTheme,
-  PresetStrictDesignOptions
-> = definePreset<PresetStrictDesignOptions, PresetStrictDesignTheme>(
+// NOTE: The factory is built against wind4's theme (PresetWind4Theme) because
+// presetWind4's rules and variants are typed to it and Preset<Theme> is
+// invariant in Theme, so they cannot be re-typed to PresetStrictDesignTheme
+// without internal casts.
+const factory = definePreset<PresetStrictDesignOptions, PresetWind4Theme>(
   (options) => {
-    const theme = options?.theme
+    const theme = parseTheme(options?.theme)
 
-    if (!theme) {
-      throw new Error('theme is required')
-    }
+    const wind = presetWind4()
 
-    // NOTE: Something in the types of definePreset makes it so that the theme
-    // property cannot have required properties. Because of this, we need to
-    // enforce the required properties here.
-
-    if (
-      !theme.colors ||
-      !theme.spacing ||
-      !theme.fontSize ||
-      !theme.fontWeight
-    ) {
-      throw new Error(
-        'theme with a minimum of colors, spacing, fontSize, and fontWeight is required',
-      )
-    }
-
-    const wind = presetWind3()
-
-    const rules = [...localRules]
-
-    if (wind.rules) {
-      rules.push(...wind.rules)
-    }
+    // Remove wind4's native mask-size rule. Its handler resolves non-theme
+    // forms (brackets, $vars, globals, fractions, unit and bare numeric
+    // values) that the blocklist cannot catch, so it must not remain as a
+    // fallback behind the themed mask-size rule.
+    const windRules = (wind.rules ?? []).filter(
+      (rule) => String(rule[0]) !== String(/^mask-size-(.+)$/),
+    )
 
     return {
       ...wind,
       extendTheme: extendTheme(theme),
       name: 'unocss-preset-strict-design',
       blocklist: blocklist(theme),
-      rules,
+      // NOTE: UnoCSS tries later-registered rules first, so the local rules
+      // go last to take precedence over wind4's native rules.
+      rules: [...windRules, ...localRules],
     }
   },
 )
+
+// NOTE: UnoCSS's Preset<Theme> is invariant in Theme (RuleContext embeds the
+// invariant UnoGenerator), so this single boundary assertion is unprovable in
+// TypeScript — but it is true at runtime: the factory validates the theme via
+// parseTheme at creation, and extendTheme replaces `text` wholesale with the
+// user's entries and empties `container`, so every theme a consumer handler
+// observes satisfies PresetStrictDesignTheme. A cast-free version needs
+// upstream UnoCSS to type presetWind4 as a generic factory.
+export const presetStrictDesign = factory as unknown as PresetFactory<
+  PresetStrictDesignTheme,
+  PresetStrictDesignOptions
+>

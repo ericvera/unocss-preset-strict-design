@@ -1,7 +1,24 @@
-import type { Rule } from 'unocss'
-import type { PresetStrictDesignTheme } from './index.js'
+import type { CSSObject, PresetWind4Theme, Rule } from 'unocss'
+import { isStringRecord } from './internal/parseTheme.js'
 
-export const rules: Rule<PresetStrictDesignTheme>[] = [
+const spacingPropertyBase: Record<string, string> = {
+  m: 'margin',
+  p: 'padding',
+}
+
+const spacingDirections: Record<string, string[]> = {
+  '': [''],
+  x: ['-left', '-right'],
+  y: ['-top', '-bottom'],
+  t: ['-top'],
+  r: ['-right'],
+  b: ['-bottom'],
+  l: ['-left'],
+  s: ['-inline-start'],
+  e: ['-inline-end'],
+}
+
+export const rules: Rule<PresetWind4Theme>[] = [
   /**
    * Mask Size
    * NOTE: There does not seem to be a mask-size rule in Tailwind so keeping
@@ -28,9 +45,79 @@ export const rules: Rule<PresetStrictDesignTheme>[] = [
    */
   [
     /^opacity-(.+)$/,
-    ([, level], { theme }) =>
-      level && theme.opacity?.[level]
-        ? { ['opacity']: theme.opacity[level] }
-        : undefined,
+    ([, level], { theme }) => {
+      // NOTE: opacity is this preset's theme extension; the merged runtime
+      // theme carries it, but wind4's Theme type does not. The read is
+      // widened only to an anonymous { opacity?: unknown } shape and backed
+      // by the isStringRecord runtime check instead of a cast to the strict
+      // theme type.
+      const { opacity } = theme as { opacity?: unknown }
+
+      if (!level || !isStringRecord(opacity)) {
+        return
+      }
+
+      const value = opacity[level]
+
+      return value ? { opacity: value } : undefined
+    },
+  ],
+
+  /**
+   * Margin/Padding
+   * NOTE: wind4's directionSize handler resolves numeric values through the
+   * calc(var(--spacing) * n) multiplier path before consulting theme.spacing,
+   * so numeric theme keys would never resolve to their themed values. These
+   * rules resolve theme.spacing directly and fall through (undefined) for
+   * unthemed keys so statics like m-auto reach wind4's native handler.
+   * Negative values (-m-*) are handled by wind4's negative variant, which
+   * strips the leading dash before matching and negates the emitted values.
+   */
+  [
+    /^([mp])([xytrblse]?)-(.+)$/,
+    ([, prop, direction, level], { theme }) => {
+      if (
+        !prop ||
+        direction === undefined ||
+        !level ||
+        !theme.spacing?.[level]
+      ) {
+        return
+      }
+
+      const base = spacingPropertyBase[prop]
+      const suffixes = spacingDirections[direction]
+
+      if (!base || !suffixes) {
+        return
+      }
+
+      const css: CSSObject = {}
+
+      for (const suffix of suffixes) {
+        css[`${base}${suffix}`] = theme.spacing[level]
+      }
+
+      return css
+    },
+  ],
+
+  /**
+   * Gap
+   * NOTE: Same numeric multiplier issue as margin/padding — wind4's native
+   * gap handler never consults theme.spacing for numeric keys.
+   */
+  [
+    /^gap(?:-([xy]))?-(.+)$/,
+    ([, direction, level], { theme }) => {
+      if (!level || !theme.spacing?.[level]) {
+        return
+      }
+
+      const property =
+        direction === 'x' ? 'column-gap' : direction === 'y' ? 'row-gap' : 'gap'
+
+      return { [property]: theme.spacing[level] }
+    },
   ],
 ]
