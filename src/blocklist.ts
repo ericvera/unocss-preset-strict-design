@@ -35,7 +35,7 @@ export const blocklist: (theme: PresetStrictDesignTheme) => BlocklistRule[] = (
   // Disable arbitraty values for text-[*]
   [/^text-\[(.*)\]$/, themeValuesMessage],
   // Block numeric values not defined in theme
-  [shouldBeBlocked(/^text-(.*)$/, { ...theme.fontSize }), staticValuesMessage],
+  [shouldBeBlocked(/^text-(.*)$/, { ...theme.text }), staticValuesMessage],
 
   // Margins and Padding
   // Disable arbitraty values for mX-[*] and pX-[*]

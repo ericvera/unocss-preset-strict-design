@@ -1,13 +1,5 @@
-import { CSSObject } from 'unocss'
-
 export const shouldBeBlocked =
-  (
-    regex: RegExp,
-    themeSection: Record<
-      string,
-      string | [string, string | CSSObject] | [string, string, string]
-    >,
-  ) =>
+  (regex: RegExp, themeSection: Record<string, unknown>) =>
   (selector: string): boolean => {
     const match = regex.exec(selector)
 
