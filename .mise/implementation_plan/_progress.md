@@ -41,3 +41,36 @@
 - Verification: `yarn smoke` green (build + lint + 26 tests);
   `grep -rn "presetWind3|PresetWindTheme" src/` clean; manual CSS spot-check
   of generated output performed via scratch script (matches test assertions).
+
+## 2.1 — Blocklist overhaul: suffix-conditional blocking and regex fixes
+
+- Key changes:
+  - `src/internal/shouldBeSuffixBlocked.ts` (NEW): `shouldBeSuffixBlocked(theme)`
+    function matcher for the size-suffix blocklist entry. Suffix list extended
+    with wind4's `2xs`/`3xs`. Maps the full utility head to a single USER-theme
+    section (`text` → `theme.text`, `font` → `theme.fontWeight`, `opacity` →
+    `theme.opacity`, margin/padding incl. negatives and directionals plus
+    `gap`/`gap-x`/`gap-y`/`w`/`h`/`min-*`/`max-*`/`mask-size` → `theme.spacing`);
+    allows the selector iff the user supplied that section key, blocks any other
+    prefix unconditionally. Co-located `shouldBeSuffixBlocked.test.ts` (9 direct
+    unit tests, no generator).
+  - `src/blocklist.ts`: entry 1 replaced by the suffix matcher (message
+    `'Use theme values.'` kept); m/p bracket regex fixed to
+    `/^(-?m|p)([rltbxyse]?)-\[.+\]$/` (adds x/y); sizing/gap bracket regex fixed
+    to `/^(gap(?:-[xy])?|h|min-h|max-h|w|min-w|max-w)-\[.+\]$/` (escapes the
+    former `[.+]` char class, adds gap-x/gap-y); NEW `mask-size-[*]` bracket
+    block and `shouldBeBlocked(/^mask-size-(.+)$/, theme.spacing)` numeric
+    block. Entries 2, 3, 4, 6, 8, 9 unchanged.
+  - `src/blocklist.test.ts` (NEW): generator-based blocking matrix — both
+    suffix-conditional directions (`p-sm` emits literal; `text-sm` blocked
+    without `text.sm`, emits with it via a second generator theme), all 21
+    bracket forms (absence asserted via UnoCSS-escaped selectors plus value
+    leak checks), numeric guard (`p-5`/`w-9`/`gap-7`/`text-9`/`font-100`/
+    `opacity-55`/`mask-size-3` blocked; no `calc(var(--spacing)` in preflighted
+    CSS), consistency renames (`color-primary`/`fw-bold`), and statics
+    regression (`w-full`/`m-auto`/`w-1/2` still emit).
+- Deviations from plan: none. The new internal file is named
+  `shouldBeSuffixBlocked.ts` (returns true = block, consistent with
+  `shouldBeBlocked.ts`) rather than the plan's placeholder name — explicitly
+  left to implementer discretion.
+- Verification: `yarn smoke` green (build + lint + 44 tests across 4 files).
