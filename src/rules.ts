@@ -1,4 +1,4 @@
-import type { CSSObject, Rule } from 'unocss'
+import type { CSSObject, PresetWind4Theme, Rule } from 'unocss'
 import type { PresetStrictDesignTheme } from './index.js'
 
 const spacingPropertyBase: Record<string, string> = {
@@ -18,7 +18,7 @@ const spacingDirections: Record<string, string[]> = {
   e: ['-inline-end'],
 }
 
-export const rules: Rule<PresetStrictDesignTheme>[] = [
+export const rules: Rule<PresetWind4Theme>[] = [
   /**
    * Mask Size
    * NOTE: There does not seem to be a mask-size rule in Tailwind so keeping
@@ -45,10 +45,15 @@ export const rules: Rule<PresetStrictDesignTheme>[] = [
    */
   [
     /^opacity-(.+)$/,
-    ([, level], { theme }) =>
-      level && theme.opacity?.[level]
-        ? { ['opacity']: theme.opacity[level] }
-        : undefined,
+    ([, level], { theme }) => {
+      // NOTE: opacity is this preset's theme extension; the merged runtime
+      // theme carries it, but wind4's Theme type does not.
+      const { opacity } = theme as PresetStrictDesignTheme
+
+      return level && opacity?.[level]
+        ? { ['opacity']: opacity[level] }
+        : undefined
+    },
   ],
 
   /**

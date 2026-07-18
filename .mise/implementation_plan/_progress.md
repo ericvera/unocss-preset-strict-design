@@ -99,3 +99,24 @@
 - Verification: `yarn smoke` green (build + lint + 44 tests); every README
   class example cross-checked against `src/preset.test.ts` /
   `src/blocklist.test.ts` assertions; no publish/tag performed.
+
+## Acceptance fix — drop the whole-preset `as unknown as Preset<...>` cast
+
+- Key changes:
+  - `src/index.ts`: factory retyped to
+    `PresetFactory<PresetWind4Theme, PresetStrictDesignOptions>` /
+    `definePreset<PresetStrictDesignOptions, PresetWind4Theme>`; the
+    `as unknown as Preset<PresetStrictDesignTheme>` cast on `presetWind4()`
+    and the `Preset` type import removed. Strict typing stays at the options
+    boundary (`PresetStrictDesignOptions.theme: PresetStrictDesignTheme`);
+    NOTE comment explains Preset<Theme> is invariant in Theme.
+  - `src/rules.ts`: `rules` retyped to `Rule<PresetWind4Theme>[]`; the opacity
+    handler reads the section via one narrow
+    `const { opacity } = theme as PresetStrictDesignTheme` cast (opacity is
+    this preset's theme extension, absent from wind4's Theme type).
+  - `src/extendTheme.ts` / `src/blocklist.ts`: unchanged, still compile.
+- Deviations from plan: none. Behavior unchanged (types-only plus the opacity
+  destructure); no test files modified.
+- Verification: `yarn prettier --write .` then `yarn smoke` green (build +
+  lint + 44 tests across 4 files); `grep -n "unknown" src/*.ts` returns
+  nothing.
