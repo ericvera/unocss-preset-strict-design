@@ -1,11 +1,12 @@
 // @ts-check
 
 import eslint from '@eslint/js'
+import { defineConfig, globalIgnores } from 'eslint/config'
 import tseslint from 'typescript-eslint'
 
-export default tseslint.config(
+export default defineConfig(
   eslint.configs.recommended,
-  ...tseslint.configs.strictTypeChecked,
+  tseslint.configs.strictTypeChecked,
   {
     languageOptions: {
       parserOptions: {
@@ -14,7 +15,5 @@ export default tseslint.config(
       },
     },
   },
-  {
-    ignores: ['dist/*', '.yarn/*', '.vscode/*', '.github/*'],
-  },
+  globalIgnores(['dist/*', '.yarn/*', '.vscode/*', '.github/*']),
 )

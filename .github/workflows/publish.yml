@@ -11,6 +11,8 @@ jobs:
       # Give the default GITHUB_TOKEN write permission to commit and push the
       # added or changed files to the repository.
       contents: write
+      # Required for npm trusted publishing (OIDC).
+      id-token: write
 
     steps:
       - name: Checkout
@@ -19,7 +21,7 @@ jobs:
       - name: Set Node version
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
 
       - name: Install Dependencies
         run: yarn
@@ -42,11 +44,14 @@ jobs:
           output-file: 'false'
           github-token: ${{ github.token }}
 
-      - name: Publish to NPM
-        uses: JS-DevTools/npm-publish@v3
+      # Trusted publishing requires npm 11.5.1 or later.
+      - name: Update npm
         if: ${{ steps.changelog.outputs.skipped == 'false' }}
-        with:
-          token: ${{ secrets.NPM_TOKEN }}
+        run: npm install -g npm@latest
+
+      - name: Publish to NPM
+        if: ${{ steps.changelog.outputs.skipped == 'false' }}
+        run: npm publish
 
       - name: Create Release
         uses: ncipollo/release-action@v1
